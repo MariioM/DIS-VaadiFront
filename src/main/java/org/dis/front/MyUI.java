@@ -12,6 +12,7 @@ import org.dis.back.EmpleadoBR;
 import org.dis.back.TipoEmpleado;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -41,7 +42,7 @@ public class MyUI extends UI {
 
         //TextField tipo = creaLabel("Tipo de Empleado");
         ComboBox <String> tipo = new ComboBox<>("Tipo de Empleado",
-                Array.asList(TipoEmpleado.ENCARGADO, TipoEmpleado.VENDEDOR));
+                Arrays.asList(TipoEmpleado.ENCARGADO, TipoEmpleado.VENDEDOR));
         TextField ventasMes = creaLabel("Ventas de Mes");
         TextField horasExtra = creaLabel("Horas Extra");
         TextField salarioNetoI = creaLabel("Salario Neto");
