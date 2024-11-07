@@ -22,6 +22,12 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("mytheme")
 public class MyUI extends UI {
 
+
+    private TextField creaLabel(String texto){
+        TextField etiqueta = new TextField();
+        etiqueta.setCaption(texto);
+        return etiqueta;
+    }
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final VerticalLayout layout = new VerticalLayout();
