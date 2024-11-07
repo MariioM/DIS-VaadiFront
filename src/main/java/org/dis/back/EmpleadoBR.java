@@ -2,7 +2,7 @@ package org.dis.back;
 
 public class EmpleadoBR {
 
-    double calculaSalarioBruto( String tipoEmpleado, double ventasMes, double horasExtra) throws BRException{
+    public double calculaSalarioBruto( String tipoEmpleado, double ventasMes, double horasExtra) throws BRException{
         if (tipoEmpleado=="" || ventasMes < 0 || horasExtra < 0) {
             throw new BRException("Valores de entrada no válidos");
         }
@@ -22,7 +22,7 @@ public class EmpleadoBR {
         return total_salario;
     }
 
-    double calculaSalarioNeto(double salarioBruto) throws BRException{
+    public double calculaSalarioNeto(double salarioBruto) throws BRException{
         if (salarioBruto < 0) {
             throw new BRException("Salario neto total menor que 0");
         }

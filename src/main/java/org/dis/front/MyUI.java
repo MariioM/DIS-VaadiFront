@@ -6,11 +6,12 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import org.dis.back.BRException;
+import org.dis.back.EmpleadoBR;
+import org.dis.back.TipoEmpleado;
+
+import java.lang.reflect.Array;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -31,17 +32,66 @@ public class MyUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final VerticalLayout layout = new VerticalLayout();
-        
-        final TextField name = new TextField();
-        name.setCaption("Type your name here:");
+        final HorizontalLayout salarioBruto = new HorizontalLayout();
+        final HorizontalLayout salarioNeto = new HorizontalLayout();
+        final VerticalLayout salarioBrutoContenedor = new VerticalLayout();
+        final VerticalLayout salarioNetoContenedor = new VerticalLayout();
+        final VerticalLayout contenedorLabelBruto = new VerticalLayout();
+        final VerticalLayout contenedorLabelNeto = new VerticalLayout();
 
-        Button button = new Button("Click Me");
-        button.addClickListener(e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() 
-                    + ", it works!"));
+        //TextField tipo = creaLabel("Tipo de Empleado");
+        ComboBox <String> tipo = new ComboBox<>("Tipo de Empleado",
+                Array.asList(TipoEmpleado.ENCARGADO, TipoEmpleado.VENDEDOR));
+        TextField ventasMes = creaLabel("Ventas de Mes");
+        TextField horasExtra = creaLabel("Horas Extra");
+        TextField salarioNetoI = creaLabel("Salario Neto");
+        salarioBruto.addComponents(tipo, ventasMes, horasExtra);
+        salarioNeto.addComponents(salarioNetoI);
+        Button botonSalarioBruto = new Button("Calcular Salario Bruto");
+        botonSalarioBruto.addClickListener(e -> {
+            String tipoEmpleadoIn = tipo.getValue();
+            double ventasMesIn = Double.parseDouble(ventasMes.getValue());
+            double horasExtraIn = Double.parseDouble(horasExtra.getValue());
+            EmpleadoBR empleado = new EmpleadoBR();
+            try {
+                double resultado = empleado.calculaSalarioBruto(tipoEmpleadoIn, ventasMesIn, horasExtraIn);
+                Label labelSalarioBruto = new Label("El salario bruto obtenido es: " + resultado);
+                salarioBrutoContenedor.addComponent(labelSalarioBruto);
+                contenedorLabelBruto.removeAllComponents();
+                contenedorLabelBruto.addComponents(labelSalarioBruto);
+            } catch (BRException ex) {
+                Label labelSalarioBruto =  new Label(ex.getMessage());
+                contenedorLabelBruto.removeAllComponents();
+                contenedorLabelBruto.addComponents(labelSalarioBruto);
+                throw new RuntimeException(ex);
+            }
         });
-        
-        layout.addComponents(name, button);
+
+        Button botonSalarioNeto = new Button("Calcular Salario Neto");
+        botonSalarioNeto.addClickListener(e -> {
+            double SalarioBrutoIn = Double.parseDouble(salarioNetoI.getValue());
+            EmpleadoBR empleado = new EmpleadoBR();
+            try {
+                double resultado = empleado.calculaSalarioNeto(SalarioBrutoIn);
+                Label labelSalarioNeto = new Label("El salario neto obtenido es: " + resultado);
+                salarioNetoContenedor.addComponent(labelSalarioNeto);
+                contenedorLabelNeto.removeAllComponents();
+                contenedorLabelNeto.addComponents(labelSalarioNeto);
+            } catch (BRException ex) {
+                Label labelSalarioNeto = new Label(ex.getMessage());
+                contenedorLabelNeto.removeAllComponents();
+                contenedorLabelNeto.addComponents(labelSalarioNeto);
+            }
+        });
+
+        salarioBrutoContenedor.addComponents(salarioBruto, botonSalarioBruto, contenedorLabelBruto);
+        salarioNetoContenedor.addComponents(salarioNeto, botonSalarioNeto, contenedorLabelNeto);
+
+        TabSheet tabs = new TabSheet();
+        tabs.addTab(salarioBrutoContenedor).setCaption("Calcular Salario Bruto");
+        tabs.addTab(salarioNetoContenedor).setCaption("Calcular Salario Neto");
+
+        layout.addComponents(tabs);
         
         setContent(layout);
     }
